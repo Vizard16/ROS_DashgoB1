@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <!--Robot Parameters-->
+    <arg name="wheel_radius" default="0.062"/>
+    <arg name="robot_wheelbase"  default="0.330"/>
+
+    <!--Simulation Parameters-->
+    <arg name="sample_time" default="0.01"/>
+    <arg name="node_rate"  default="100"/>
+
+    <!--Initial Position-->
+    <arg name="pos_x0" default="0.0"/>
+    <arg name="pos_y0" default="0.0"/>
+    <arg name="pos_th0" default="0.0"/>
+
+    <!--Transform Frames-->
+    <arg name="base_frame" default="base_link"/>
+    <arg name="odom_frame" default="odom"/>
+
+    <!--Initialise kinematic_model -->
+    <node pkg="dashgo_b1" type="localisation.py" name="odometry" output="screen">
+        <param name="pos_x0" value="$(arg pos_x0)"/>
+        <param name="pos_y0" value="$(arg pos_y0)"/>
+        <param name="pos_th0" value="$(arg pos_th0)"/>
+        <param name="sample_time" value="$(arg sample_time)"/>
+        <param name="node_rate" value="$(arg node_rate)"/>
+        <param name="wheel_radius" value="$(arg wheel_radius)"/>
+        <param name="robot_wheelbase" value="$(arg robot_wheelbase)"/>
+        <param name="base_frame" value="$(arg base_frame)"/>
+        <param name="odom_frame" value="$(arg odom_frame)"/>
+    </node>
+
+</launch>

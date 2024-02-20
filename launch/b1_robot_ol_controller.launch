@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <!--Controller Parameters-->
+    <arg name="linear_speed" default="0.3"/>
+    <arg name="angular_speed"  default="0.3"/>
+
+    <!--Simulation Parameters-->
+    <arg name="corners" default="4"/>
+    <arg name="edgeLenght"  default="0.5"/>
+
+    <!--Transform Frames-->
+    <arg name="node_rate" default="100"/>
+
+    <!--Initialise kinematic_model -->
+    <node pkg="dashgo_b1" type="closed_loop_ctrl.py" name="controller">
+        <param name="linear_speed" value="$(arg linear_speed)"/>
+        <param name="angular_speed" value="$(arg angular_speed)"/>
+        <param name="corners" value="$(arg corners)"/>
+        <param name="edgeLenght" value="$(arg edgeLenght)"/>
+        <param name="node_rate" value="$(arg node_rate)"/>
+    </node>
+
+</launch>

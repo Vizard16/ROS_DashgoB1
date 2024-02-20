@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <!--Robot Parameters-->
+    <arg name="wheel_radius" default="0.062"/>
+    <arg name="robot_wheelbase"  default="0.330"/>
+
+    <!--Simulation Parameters-->
+    <arg name="sample_time" default="0.01"/>
+    <arg name="node_rate"  default="100"/>
+    
+    <!--Simulation Noise Parameters-->
+    <arg name="noise"   default="False"/>
+    <arg name="noise_kr"   default="0.01"/>
+    <arg name="noise_kl"   default="0.01"/>
+    <arg name="noise_kv"   default="0.02"/>
+    <arg name="noise_kw"   default="0.02"/>
+
+    <!--Initial Position-->
+    <arg name="pos_x0" default="0.0"/>
+    <arg name="pos_y0" default="0.0"/>
+    <arg name="pos_th0" default="0.0"/>
+
+    <!--Pose_Frame-->
+    <arg name="pose_frame" default="world"/>
+
+    <!--Initialise kinematic_model -->
+    <node pkg="dashgo_b1" type="nonholo_kinematic_sim.py" name="DashgoB1_Robot">
+        <param name="pos_x0" value="$(arg pos_x0)"/>
+        <param name="pos_y0" value="$(arg pos_y0)"/>
+        <param name="pos_th0" value="$(arg pos_th0)"/>
+        <param name="sample_time" value="$(arg sample_time)"/>
+        <param name="node_rate" value="$(arg node_rate)"/>
+        <param name="wheel_radius" value="$(arg wheel_radius)"/>
+        <param name="robot_wheelbase" value="$(arg robot_wheelbase)"/>
+        <param name="pose_frame" value="$(arg pose_frame)"/>
+        <param name="noise" value="$(arg noise)"/>
+        <param name="noise_kr" value="$(arg noise_kr)"/>
+        <param name="noise_kl" value="$(arg noise_kl)"/>
+        <param name="noise_kv" value="$(arg noise_kl)"/>
+        <param name="noise_kw" value="$(arg noise_kl)"/>
+    </node>
+
+</launch>

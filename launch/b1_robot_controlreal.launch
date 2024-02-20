@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<launch>
+  
+    <!--Robot 1 Description-->
+    <arg name="robot" default="b1"/>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="world_odom_tf" args="0  0   0   0   0   0   world   /odom"/>
+
+
+    <!--Robot Initial Position-->
+    <arg name="pos_x0" default="0.00"/>
+    <arg name="pos_y0" default="0.00"/>
+    <arg name="pos_th0" default="0.00"/>
+    <!-- Pos x0 = 0.755 -->
+    <!-- Pos y0 = 3.685 -->
+
+    <!--Goals-->
+    <arg name="goal_x" value="2.0"/>
+    <arg name="goal_y" value="1.0"/>
+    <arg name="goal_th" value="0.0"/>
+
+    <!--Control type = teleop, pos_control, geom_figures)-->
+    <arg name="control_type" default="pos_control"/>
+
+    <!--Topics-->
+    <arg name="odom_topic" value="/odom"/>
+    <arg name="cmd_topic" value="/smoother_cmd_vel"/>
+    <arg name="setpoint_topic" default="/move_base_simple/goal"/>
+    <arg name="calc_odom_topic" value="/calc_odom"/>
+    
+    <!--Robot Frames/Joints-->
+    <arg name="base_frame" value="base_link"/>
+    <arg name="odom_frame" value="odom_calc"/>
+    <arg name="goal_frame" default="world"/>
+
+    <!--Controller Params-->
+    <!--Closed Loop Position Controller-->
+    <arg name="controller" value="$(arg robot)_controller"/>
+    <arg name="goal_radius" default="0.1"/>
+    <arg name="v_gains"  default="{'p': 0.15, 'i': 0.0}"/>
+    <arg name="w_gains"  default="{'p': 0.3, 'i': 0.0}"/>
+    
+    <!--Open Loop Position Controller (Geometric Figure)-->
+    <arg name="linear_speed" value="0.3"/>
+    <arg name="angular_speed"  value="0.3"/>
+    <arg name="corners" value="4"/>
+    <arg name="edgeLenght"  value="0.5"/>
+
+   
+    <!--Simulated robot -->
+    <include file="$(find dashgo_b1)/launch/b1_robot.launch">
+        <arg name="robot" value="$(arg robot)"/>
+        <arg name="odom_topic" value="$(arg odom_topic)"/>
+        <arg name="cmd_topic" value="$(arg cmd_topic)"/>
+        <arg name="pos_x0" value="$(arg pos_x0)"/>
+        <arg name="pos_y0" value="$(arg pos_y0)"/>
+        <arg name="pos_th0" value="$(arg pos_th0)"/>
+    </include>
+ 
+
+   <!--Open Loop Controller-->
+    <group if="$(eval arg('control_type') == 'geom_figures')">
+    <include file="$(find dashgo_b1)/launch/b1_robot_ol_controller.launch">
+        <arg name="linear_speed" value="$(arg linear_speed)"/>
+        <arg name="angular_speed"  value="$(arg angular_speed)"/>
+        <arg name="corners" value="$(arg corners)"/>
+        <arg name="edgeLenght"  value="$(arg edgeLenght)"/>
+        <arg name="node_rate"  value="100"/>
+    </include>
+    </group>
+ 
+
+    <!--Closed Loop Controller-->
+    <group if="$(eval arg('control_type') == 'pos_control')">
+    <include file="$(find dashgo_b1)/launch/b1_robot_cl_controller.launch">
+        <arg name="controller" value="$(arg controller)"/>
+        <arg name="goal_radius" value="$(arg goal_radius)"/>
+        <arg name="v_gains"  value="$(arg v_gains)"/>
+        <arg name="w_gains"  value="$(arg w_gains)"/>
+        <arg name="odom_topic" value="odom_topic"/>
+        <arg name="cmd_topic" value="$(arg cmd_topic)"/>
+        <arg name="setpoint_topic" value="$(arg setpoint_topic)"/>
+        <arg name="sample_time" value="0.01"/>
+        <arg name="node_rate"  value="100"/>
+        <arg name="base_frame" value="$(arg base_frame)"/>
+        <arg name="odom_frame" value="$(arg odom_frame)"/>
+        <arg name="goal_frame" value="$(arg goal_frame)"/>
+        <arg name="goal_x" value="$(arg goal_x)"/>
+        <arg name="goal_y" value="$(arg goal_y)"/>
+        <arg name="goal_th" value="$(arg goal_th)"/>
+        <arg name="pos_x0" value="$(arg pos_x0)"/>
+        <arg name="pos_y0" value="$(arg pos_y0)"/>
+    </include>
+    </group>
+
+    <group if="$(eval arg('control_type') == 'teleop')">
+        <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen">
+            <remap from="cmd_vel" to="$(arg cmd_topic)"/>
+        </node>
+    </group>
+
+    <!--Initialise RVIZ -->
+    <!--arg name="rvizconfig" default="$(find dashgo_b1)/rviz/single_robot.rviz" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />-->
+
+
+</launch>

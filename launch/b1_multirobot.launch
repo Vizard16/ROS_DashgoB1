@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<launch>
+  
+    <!--Robot 1 Description-->
+    <arg name="robot1" value="b1_sim1"/>
+    <!--Robot 2 Description-->
+    <arg name="robot2" value="b1_sim2"/>
+   
+    <!--Initialise World -> Odom Transform -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="world_odom1_tf" args="0  0   0   0   0   0   world   $(arg robot1)/odom"/>
+    <node pkg="tf2_ros" type="static_transform_publisher" name="world_odom2_tf" args="0  0   0.0   0 0.0  0.0  world   $(arg robot2)/odom"/>
+
+
+    <!--Simulated robot -->
+   <!-- <include file="$(find dashgo_b1)/launch/b1_robot_control.launch">
+        <arg name="robot" value="$(arg robot1)"/>
+        <arg name="pos_x0" value="1.0"/>
+        <arg name="pos_y0" value="2.0"/>
+        <arg name="pos_th0" value="0.0"/>
+        <arg name="control_type" default="pos_control"/>
+        <arg name="goal_radius" value="0.2"/>
+        <arg name="v_gains"  value="{'p': 0.09, 'i': 0.0}"/>
+        <arg name="w_gains"  value="{'p': 0.3, 'i': 0.0}"/>
+        <arg name="goal_frame" value="$(arg robot2)/odom"/>
+        <arg name="setpoint_topic" value="$(arg robot2)/robot_pose"/>
+    </include> -->
+ 
+        <!--Simulated robot -->
+        <include file="$(find dashgo_b1)/launch/b1_robot_control.launch">
+        <arg name="robot" value="$(arg robot2)"/>
+        <arg name="pos_x0" value="0.0"/>
+        <arg name="pos_y0" value="0.0"/>
+        
+        <arg name="pos_th0" value="0.0"/>
+        <arg name="control_type" default="pos_control"/>
+        <arg name="goal_radius" value="0.1"/>
+        <arg name="v_gains"  value="{'p': 0.09, 'i': 0.0}"/>
+        <arg name="w_gains"  value="{'p': 0.3, 'i': 0.0}"/>
+        <arg name="goal_frame" value="world"/>
+        <arg name="setpoint_topic" value="/move_base_simple/goal"/>
+    </include>
+
+
+    <!--Initialise RVIZ -->
+    <arg name="rvizconfig" default="$(find dashgo_b1)/rviz/multi_robot.rviz" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+
+</launch>

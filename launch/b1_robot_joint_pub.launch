@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <!--Robot Parameters-->
+    <arg name="wheel_radius" default="0.062"/>
+    <arg name="robot_wheelbase"  default="0.330"/>
+
+    <!--Simulation Parameters-->
+    <arg name="sample_time" default="0.01"/>
+    <arg name="node_rate"  default="100"/>
+
+    <!--Joint Parameters-->
+    <arg name="wheelR_joint" default="rightWheel"/>
+    <arg name="wheelL_joint"  default="leftWheel"/>
+
+    <!--Joint Frames-->
+    <arg name="base_frame" default="base_link"/>
+
+    <!--Initialise kinematic_model -->
+    <node pkg="dashgo_b1" type="b1_JointPub.py" name="joint_publisher">
+        <param name="wheelR_joint" value="$(arg wheelR_joint)"/>
+        <param name="wheelL_joint" value="$(arg wheelL_joint)"/>
+        <param name="sample_time" value="$(arg sample_time)"/>
+        <param name="node_rate" value="$(arg node_rate)"/>
+        <param name="wheel_radius" value="$(arg wheel_radius)"/>
+        <param name="robot_wheelbase" value="$(arg robot_wheelbase)"/>
+        <param name="base_frame" value="$(arg base_frame)"/>
+    </node>
+
+</launch>

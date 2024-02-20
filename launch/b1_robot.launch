@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<launch>
+
+    <!--Robot 1 Description-->
+    <arg name="robot" default="b1_sim"/>
+    
+    <!--Initial Position-->
+    <arg name="pos_x0" default="0.0"/>
+    <arg name="pos_y0" default="0.0"/>
+    <arg name="pos_th0" default="0.0"/>
+
+    <!--Robot Parameters-->
+    <arg name="wheel_radius" value="0.062"/>
+    <arg name="robot_wheelbase"  value="0.330"/>
+
+    <!--Robot Frames/Joints-->
+    <arg name="base_frame" default="base_link"/>
+    <arg name="odom_frame" default="odom"/>
+    <arg name="rightWheel_joint" value="rightWheel"/>
+    <arg name="leftWheel_joint" value="leftWheel"/>
+
+    <!--Robot input output topics to remap-->
+    <arg name="odom_topic" default="/odom"/>
+    <arg name="calc_odom_topic" default="/calc_odom"/>
+    <arg name="cmd_topic" default="/cmd_vel"/>
+   
+    <!--Load mesh model -->
+    <arg name="urdf_model" value="$(find dashgo_b1)/urdf/EAI_robot_sim.urdf"/>
+        <param name="/robot_description" command="cat $(arg urdf_model)" />
+
+    <!--Robot State Publisher -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="b1_state_pub" >
+        <remap from="robot_description" to="/robot_description" />
+        <!--param name="tf_prefix" value="$(arg robot)" /-->
+    </node>
+
+    <!--Initialise Localisation -->
+    <remap from="/calc_odom" to="$(arg calc_odom_topic)" />
+    <remap from="/odom" to="$(arg odom_topic)" />
+    <include file="$(find dashgo_b1)/launch/b1_robot_localisation.launch">
+        <arg name="wheel_radius" value="$(arg wheel_radius)"/>
+        <arg name="robot_wheelbase"  value="$(arg robot_wheelbase)"/>
+        <arg name="sample_time" value="0.01"/>
+        <arg name="node_rate"  value="100"/>
+        <arg name="pos_x0" value="$(arg pos_x0)"/>
+        <arg name="pos_y0" value="$(arg pos_y0)"/>
+        <arg name="pos_th0" value="$(arg pos_th0)"/>
+        <arg name="base_frame" default="$(arg base_frame)"/>
+        <arg name="odom_frame" default="$(arg odom_frame)"/>
+    </include>
+
+    <!--Initialise joint pub node -->
+    <include file="$(find dashgo_b1)/launch/b1_robot_joint_pub.launch">
+        <arg name="wheel_radius" value="$(arg wheel_radius)"/>
+        <arg name="robot_wheelbase"  value="$(arg robot_wheelbase)"/>
+        <arg name="sample_time" value="0.01"/>
+        <arg name="node_rate"  value="100"/>
+        <arg name="wheelR_joint" value="$(arg rightWheel_joint)"/>
+        <arg name="wheelL_joint" value="$(arg leftWheel_joint)"/>
+        <arg name="base_frame" default="$(arg base_frame)"/>
+    </include>
+
+    <!--Initialise kinematic model -->
+    <remap from="/cmd_vel" to="$(arg cmd_topic)" />
+    <include file="$(find dashgo_b1)/launch/b1_robot_sim.launch">
+        <arg name="wheel_radius" value="$(arg wheel_radius)"/>
+        <arg name="robot_wheelbase"  value="$(arg robot_wheelbase)"/>
+        <arg name="noise"   value="False"/>
+        <arg name="sample_time" value="0.01"/>
+        <arg name="node_rate"  value="100"/>
+        <arg name="pos_x0" value="$(arg pos_x0)"/>
+        <arg name="pos_y0" value="$(arg pos_y0)"/>
+        <arg name="pos_th0" value="$(arg pos_th0)"/>
+    </include>
+
+</launch>

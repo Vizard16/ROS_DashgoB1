@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <!--Controller Parameters-->
+    <arg name="controller" default="controller1"/>
+    <arg name="xarm" default=""/>
+
+
+    <!--Controller Parameters-->
+    <arg name="goal_radius" default="0.2"/>
+    <arg name="v_gains"  default="{'p': 0.09, 'i': 0.0}"/>
+    <arg name="w_gains"  default="{'p': 0.3, 'i': 0.0}"/>
+
+    <!--Goals-->
+    <arg name="goal_x" default="0.0"/>
+    <arg name="goal_y" default="0.0"/>
+    <arg name="goal_th" default="0.0"/>
+
+    <arg name="pos_x0" default="0.0"/>
+    <arg name="pos_y0" default="0.0"/>
+
+
+    <!--Simulation Parameters-->
+    <arg name="sample_time" default="0.01"/>
+    <arg name="node_rate"  default="100"/>
+
+    <!--Transform Frames-->
+    <arg name="base_frame" default="base_link"/>
+    <arg name="odom_frame" default="odom_calc"/>
+    <arg name="goal_frame" default="world"/>
+
+    <!--Topics-->
+    <arg name="cmd_topic" default="/cmd_vel"/>
+    <arg name="odom_topic" default="/odom"/>
+    <arg name="setpoint_topic" default="/move_base_simple/goal"/>
+
+    <!--Initialise kinematic_model -->
+    <remap from="/cmd_vel" to="$(arg cmd_topic)" />
+    <remap from="/odom" to="$(arg odom_topic)" />
+    <remap from="/goal" to="$(arg setpoint_topic)" />
+    <node pkg="dashgo_b1" type="closed_loop_ctrl.py" name="$(arg controller)" output="screen">
+        <rosparam param="v_gains"  subst_value="True">$(arg v_gains) </rosparam>
+        <rosparam param="w_gains" subst_value="True">$(arg w_gains) </rosparam>
+        <param name="sample_time" value="$(arg sample_time)"/>
+        <param name="node_rate" value="$(arg node_rate)"/>
+        <param name="goal_radius" value="$(arg goal_radius)"/>
+        <param name="base_frame" value="$(arg base_frame)"/>
+        <param name="goal_frame" value="$(arg goal_frame)"/>
+        <param name="pos_x0" value="$(arg pos_x0)"/>
+        <param name="pos_y0" value="$(arg pos_y0)"/>
+        <!--param name="goal_x" value="$(arg goal_x)"/>
+        <param name="goal_y" value="$(arg goal_y)"/>
+        <param name="goal_th" value="$(arg goal_th)"/
+        -->
+    </node>
+
+    <node pkg="dashgo_b1" type="xArm.py" name="xArm_controller" output="screen">
+    </node> 
+    <node pkg="dashgo_b1" type="xArm2.py" name="xArm_controller2" output="screen">
+    </node> 
+
+    
+
+</launch>
